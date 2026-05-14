@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rainfall Prediction System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%233a7cff' cx='50' cy='50' r='45'/%3E%3Cpath d='M35 55 l10 -15 l10 15 l10 -15 l10 15' fill='none' stroke='%23fff' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <div class="hero-grid">
+            <section class="hero-panel">
+                <div class="hero-badge">Rainfall Predictor</div>
+                <h1>Forecast weather with confidence</h1>
+                <p>Enter today's atmospheric inputs and receive a fast, accurate rainfall prediction powered by machine learning.</p>
+                <div class="hero-stats">
+                    <div>
+                        <strong>FastAPI Backend</strong>
+                        <span>Reliable API-driven predictions</span>
+                    </div>
+                    <div>
+                        <strong>Responsive Design</strong>
+                        <span>Perfect on desktop, tablet, and mobile</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Prediction Form</p>
+                        <h2>Enter weather details</h2>
+                    </div>
+                    <div class="weather-icon">⛅</div>
+                </div>
+
+                <form action="/predict" method="post" id="predictionForm" autocomplete="off" novalidate>
+                    <div class="input-grid">
+                        <label class="input-field">
+                            <span>Pressure</span>
+                            <input type="number" step="any" name="pressure" placeholder="Enter pressure in hPa" min="0" required>
+                            <small>hPa</small>
+                        </label>
+                        <label class="input-field">
+                            <span>Temperature</span>
+                            <input type="number" step="any" name="temparature" placeholder="Enter temperature in °C" required>
+                            <small>°C</small>
+                        </label>
+                        <label class="input-field">
+                            <span>Humidity</span>
+                            <input type="number" step="any" name="humidity" placeholder="Enter humidity in %" min="0" max="100" required>
+                            <small>%</small>
+                        </label>
+                        <label class="input-field">
+                            <span>Cloud</span>
+                            <input type="number" step="any" name="cloud" placeholder="Enter cloud cover in %" min="0" max="100" required>
+                            <small>%</small>
+                        </label>
+                        <label class="input-field">
+                            <span>Sunshine</span>
+                            <input type="number" step="any" name="sunshine" placeholder="Enter sunshine in hours" min="0" required>
+                            <small>hrs</small>
+                        </label>
+                        <label class="input-field">
+                            <span>Wind Direction</span>
+                            <input type="number" step="any" name="winddirection" placeholder="Enter direction in degrees" min="0" max="360" required>
+                            <small>°</small>
+                        </label>
+                        <label class="input-field">
+                            <span>Wind Speed</span>
+                            <input type="number" step="any" name="windspeed" placeholder="Enter speed in km/h" min="0" required>
+                            <small>km/h</small>
+                        </label>
+                    </div>
+                    <button type="submit" id="predictBtn">
+                        <span class="button-text">Predict Rainfall</span>
+                        <span class="button-spinner" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </section>
+        </div>
+
+        {% if prediction or error %}
+            {% if prediction %}
+                {% set result_type = 'rain' if 'Rain' in prediction else 'sun' %}
+                {% set result_icon = '🌧' if 'Rain' in prediction else '☀' %}
+            {% else %}
+                {% set result_type = 'error' %}
+                {% set result_icon = '⚠' %}
+            {% endif %}
+        {% else %}
+            {% set result_type = '' %}
+            {% set result_icon = '' %}
+        {% endif %}
+
+        <section id="resultSection" class="result-panel {{ result_type }} {% if not prediction and not error %}empty{% endif %}">
+            {% if prediction or error %}
+                <div class="result-card" id="resultCard">
+                    <div class="result-badge">{{ result_icon }}</div>
+                    <div>
+                        <p class="result-label">Prediction Result</p>
+                        <h3>{{ prediction if prediction else 'Something went wrong' }}</h3>
+                        {% if error %}
+                            <p class="result-message">{{ error }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="result-empty">
+                    <h3>Ready to predict</h3>
+                    <p>Fill in the weather inputs above and tap Predict to see if rainfall is expected.</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <footer class="page-footer">Powered by FastAPI &amp; Machine Learning</footer>
+    </div>
+
+    <script src="/static/script.js" defer></script>
+</body>
+</html>
