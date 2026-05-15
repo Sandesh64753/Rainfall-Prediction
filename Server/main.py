@@ -5,37 +5,35 @@ from fastapi.staticfiles import StaticFiles
 
 import pickle
 import pandas as pd
-import os
+from pathlib import Path
 
 app = FastAPI()
 
 # Base Directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).resolve().parent
 
-# Static Folder
-templates = Jinja2Templates(directory=BASE_DIR / "templates")
+# Templates
+templates = Jinja2Templates(
+    directory=BASE_DIR / "templates"
+)
 
+# Static Files
 app.mount(
     "/static",
     StaticFiles(directory=BASE_DIR / "static"),
     name="static"
 )
 
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent
-
+# Load Model
 model_path = BASE_DIR / "Rainfall_Prediction_model.pkl"
 
 with open(model_path, "rb") as file:
     data = pickle.load(file)
 
-# Load model
 model = data["model"]
 
-# Optional: Load features if available
+# Optional Features
 features = data.get("features", None)
-
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
